@@ -1,9 +1,153 @@
-# ML and AI Analytics Platform
+# 🤖 AI Analytics Hub
 
-## Project Team
-- **Ahmad Niazi*
+![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-3.x-000000?style=for-the-badge&logo=flask)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
+![Celery](https://img.shields.io/badge/Celery-37814A?style=for-the-badge&logo=celery&logoColor=white)
+![MIT License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-A Flask web application built as a semester project that provides a single interface for running several machine learning and NLP tasks without writing any code.
+---
+
+A production-ready AI analytics platform built with Flask, TensorFlow, Transformers, Celery, Redis, PostgreSQL, and Docker.
+
+## 👨‍💻 Author
+
+**Muhammad Ahmad Khan Niazi**
+
+BS Software Engineering  
+University of Central Punjab (UCP)
+
+GitHub:
+https://github.com/ahmadniazi0381-dev
+
+
+A Flask web application built as a project that provides a single interface for running several machine learning and NLP tasks without writing any code.
+
+## 🚀 Quick Links
+
+- Features
+- Installation
+- Documentation
+- Architecture
+- Screenshots
+- License
+
+## 📚 Table of Contents
+
+- Features
+- Technology Stack
+- Architecture
+- Folder Structure
+- Installation
+- Configuration
+- Docker Deployment
+- API Endpoints
+- Screenshots
+- Documentation
+- Roadmap
+- License
+
+## ✨ Features
+
+- Association Rule Mining (Apriori)
+- Deep Learning Classifier
+- AI Question Answering
+- AI Text Generation
+- Named Entity Recognition
+- Authentication & Authorization
+- Celery Background Workers
+- PostgreSQL Database
+- Redis Caching
+- Docker Deployment
+- REST API
+- Professional Dashboard
+
+
+## 🛠 Technology Stack
+
+| Category | Technology |
+|----------|------------|
+| Backend | Flask |
+| Language | Python |
+| Database | PostgreSQL |
+| Cache | Redis |
+| Queue | Celery |
+| Machine Learning | TensorFlow |
+| NLP | Hugging Face Transformers |
+| Data Processing | Pandas |
+| ORM | SQLAlchemy |
+| Deployment | Docker |
+| Reverse Proxy | Nginx |
+
+## 🏗 Architecture
+
+The platform follows a Modular Flask Monolith architecture with background workers.
+
+Components
+
+• Flask
+• Celery
+• Redis
+• PostgreSQL
+• TensorFlow
+• Transformers
+
+See:
+
+docs/PRODUCTION_BLUEPRINT.md
+
+## 📖 Documentation
+
+- Production Blueprint
+- Implementation Roadmap
+- Architecture Decision Record
+
+## 📂 Project Structure
+
+```text
+AI-Analytics-Hub-ML
+│
+├── ai_analytics_hub/
+├── deploy/
+├── docs/
+├── migrations/
+├── tests/
+├── README.md
+├── docker-compose.yml
+├── pyproject.toml
+└── wsgi.py
+```## 🚀 Installation
+
+```bash
+git clone https://github.com/ahmadniazi0381-dev/AI-Analytics-Hub-ML.git
+
+cd AI-Analytics-Hub-ML
+
+python -m venv .venv
+
+source .venv/bin/activate
+```
+
+Windows
+
+```powershell
+.venv\Scripts\activate
+```
+
+Install packages
+
+```bash
+pip install -e .
+```
+
+Run
+
+```bash
+flask run
+```
 
 ## What it does
 
