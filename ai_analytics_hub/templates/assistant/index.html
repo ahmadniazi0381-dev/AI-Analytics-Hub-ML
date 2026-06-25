@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Assistant | Analytics Platform{% endblock %}
+{% block content %}
+<section class="mb-4">
+  <h1 class="h3 fw-semibold">Assistant</h1>
+  <p class="text-light-emphasis mb-0">
+    Ask questions about your data, models, or results. Conversations are saved automatically.
+  </p>
+</section>
+
+<section class="row g-4 assistant-page" data-assistant-root>
+  <div class="col-lg-4 col-xl-3">
+    <div class="glass-card p-3 h-100 assistant-sidebar">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h5 mb-0">Conversations</h2>
+        <button class="btn btn-sm btn-outline-light" type="button" data-new-session>New</button>
+      </div>
+      <div class="assistant-session-list" data-session-list></div>
+    </div>
+  </div>
+  <div class="col-lg-8 col-xl-9">
+    <div class="glass-card p-3 p-lg-4 assistant-main">
+      <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+        <div>
+          <h2 class="h4 mb-0" data-session-title>Loading…</h2>
+        </div>
+        <div class="small text-light-emphasis text-end" data-session-meta></div>
+      </div>
+      <div class="assistant-messages mb-3" data-message-list></div>
+      <form class="assistant-form" data-message-form>
+        <label class="form-label" for="chatMessage">
+          <span class="standard-label">Your message</span>
+          <span class="kid-label" style="display:none">Talk to your AI companion! 🧒💬</span>
+          <span class="expert-label" style="display:none">Advanced Prompt Query Interface</span>
+        </label>
+        <textarea class="form-control assistant-textarea" id="chatMessage" rows="4"
+                  placeholder="Type your question here…" required></textarea>
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <div class="small text-light-emphasis" data-chat-status>Ready.</div>
+          <button class="btn btn-primary" type="submit">
+            <span class="standard-btn-text">Send</span>
+            <span class="kid-btn-text" style="display:none">✨ Ask AI! ✨</span>
+            <span class="expert-btn-text" style="display:none">Execute Query Payload</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/assistant.js') }}"></script>
+{% endblock %}

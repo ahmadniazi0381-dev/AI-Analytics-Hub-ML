@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Sign In | Analytics Platform{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-5">
+    <div class="glass-card p-4 p-lg-5">
+      <h1 class="h3 mb-1">Sign in</h1>
+      <p class="text-light-emphasis mb-4">Enter your email and password to continue.</p>
+      <form method="post" class="d-grid gap-3">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div>
+          <label class="form-label" for="email">Email address</label>
+          <input class="form-control" id="email" name="email" type="email"
+                 autocomplete="email" required>
+        </div>
+        <div>
+          <label class="form-label" for="password">Password</label>
+          <input class="form-control" id="password" name="password" type="password"
+                 autocomplete="current-password" required>
+        </div>
+        <button class="btn btn-primary" type="submit">Sign in</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}Machine Learning Algorithms | Analytics Platform{% endblock %}
+{% block content %}
+<section class="mb-5">
+  <h1 class="h3 fw-semibold">Machine Learning Algorithms</h1>
+  <p class="text-light-emphasis">
+    Upload a transactional dataset and run Apriori association rule mining.
+    The algorithm finds patterns showing which items tend to appear together.
+  </p>
+</section>
+
+{# ── Upload panel ────────────────────────────────────────────── #}
+<section class="row g-4 mb-5" id="ml-root" data-ml-root>
+  <div class="col-xl-4">
+    <div class="glass-card p-4 h-100">
+      <h2 class="h5 mb-3">Step 1 — Upload your CSV</h2>
+      <p class="text-light-emphasis small mb-3">
+        Each row should represent one transaction.
+        Items can be in separate columns or comma-separated in a single column.
+      </p>
+      <form class="d-grid gap-3" data-upload-form>
+        <div>
+          <label class="form-label" for="mlFile">CSV file</label>
+          <input class="form-control" id="mlFile" name="file" type="file"
+                 accept=".csv" required>
+        </div>
+        <button class="btn btn-primary" type="submit">Upload dataset</button>
+      </form>
+      <div class="small text-light-emphasis mt-3" data-upload-status>
+        No file uploaded yet.
+      </div>
+      <hr class="border-light border-opacity-10 my-4">
+      <h3 class="h6 mb-2">Uploaded files</h3>
+      <div class="upload-list" data-upload-list></div>
+    </div>
+  </div>
+
+  {# ── Apriori form ────────────────────────────────────────────── #}
+  <div class="col-xl-8">
+    <div class="glass-card p-4 p-lg-5">
+      <h2 class="h5 mb-1">Step 2 — Apriori Association Rule Mining</h2>
+      <p class="text-light-emphasis small mb-4">
+        Set the thresholds below, then click <strong>Run Apriori</strong>.
+        The algorithm will return frequent itemsets and rules that meet
+        the minimum support, confidence, and lift values you choose.
+      </p>
+
+      <form class="row g-3" data-apriori-form>
+        <div class="col-md-12">
+          <label class="form-label" for="aprioriDataset">Dataset</label>
+          <select class="form-select" id="aprioriDataset" name="upload_id"
+                  data-upload-select required></select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="minSupport">
+            Min Support
+            <span class="text-light-emphasis small">(0.01 – 1.0)</span>
+          </label>
+          <input class="form-control" id="minSupport" name="min_support"
+                 type="number" step="0.01" value="0.1" min="0.01" max="1.0" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="minConfidence">
+            Min Confidence
+            <span class="text-light-emphasis small">(0.0 – 1.0)</span>
+          </label>
+          <input class="form-control" id="minConfidence" name="min_confidence"
+                 type="number" step="0.01" value="0.4" min="0.0" max="1.0" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="minLift">
+            Min Lift
+            <span class="text-light-emphasis small">(≥ 1.0 means useful)</span>
+          </label>
+          <input class="form-control" id="minLift" name="min_lift"
+                 type="number" step="0.1" value="1.0" min="0.0" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="maxLen">Max Itemset Length</label>
+          <input class="form-control" id="maxLen" name="max_len"
+                 type="number" value="3" min="1" max="10" required>
+        </div>
+        <div class="col-12 mt-2">
+          <button class="btn btn-primary px-4" type="submit">Run Apriori</button>
+        </div>
+      </form>
+
+      <div class="mt-4" data-apriori-status style="display:none">
+        <div class="small text-light-emphasis mb-2" data-apriori-status-text>Processing…</div>
+        <div class="progress" style="height:4px">
+          <div class="progress-bar progress-bar-striped progress-bar-animated"
+               style="width:100%"></div>
+        </div>
+      </div>
+
+      {# ── Results rendered as structured cards, not raw JSON ── #}
+      <div class="mt-4" data-apriori-results style="display:none">
+        <hr class="border-light border-opacity-10 mb-4">
+        <h3 class="h6 mb-3">Results</h3>
+
+        <div class="row g-3 mb-4" data-apriori-summary></div>
+
+        <h4 class="h6 mb-2">Frequent Itemsets</h4>
+        <div class="table-responsive mb-4">
+          <table class="table table-sm text-light-emphasis" id="itemsetsTable">
+            <thead>
+              <tr><th>Itemset</th><th>Support</th></tr>
+            </thead>
+            <tbody data-itemsets-body></tbody>
+          </table>
+        </div>
+
+        <h4 class="h6 mb-2">Association Rules</h4>
+        <div class="table-responsive">
+          <table class="table table-sm text-light-emphasis" id="rulesTable">
+            <thead>
+              <tr>
+                <th>Antecedents</th>
+                <th>Consequents</th>
+                <th>Support</th>
+                <th>Confidence</th>
+                <th>Lift</th>
+              </tr>
+            </thead>
+            <tbody data-rules-body></tbody>
+          </table>
+        </div>
+      </div>
+
+      <pre class="result-panel mt-3 mb-0" data-apriori-result style="display:none"></pre>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/ml.js') }}"></script>
+{% endblock %}

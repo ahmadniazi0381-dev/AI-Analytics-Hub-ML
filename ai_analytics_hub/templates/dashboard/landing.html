@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Analytics Platform{% endblock %}
+{% block content %}
+<section class="hero-panel p-4 p-lg-5 rounded-4">
+  <div class="row g-4 align-items-center">
+    <div class="col-lg-7">
+      <h1 class="display-5 fw-semibold mt-3 mb-3">ML and AI Analytics Platform</h1>
+      <p class="lead text-light-emphasis mb-4">
+        A web application for running machine learning and NLP tasks including
+        association rule mining, neural network training, question answering,
+        text generation, and named entity recognition.
+      </p>
+      <a class="btn btn-primary px-4" href="{{ url_for('web.login') }}">Sign in</a>
+    </div>
+    <div class="col-lg-5">
+      <div class="glass-card p-4">
+        <h2 class="h5 mb-3">Modules</h2>
+        <ul class="list-unstyled mb-0 module-list">
+          <li>Apriori association rule mining</li>
+          <li>Deep learning classifier training</li>
+          <li>Question answering</li>
+          <li>Text generation</li>
+          <li>Named entity recognition</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

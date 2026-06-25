@@ -1,0 +1,25 @@
+.env
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+instance/*.db
+logs/*.log
+data/model_cache/
+data/reports/
+data/uploads/
+*.egg-info/
+.env
+# Additional Python caches
+.venv-1/
+.ipynb_checkpoints/
+.coverage
+htmlcov/
+
+# OS files
+.DS_Store
+Thumbs.db

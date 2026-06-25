@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}Users | Analytics Platform{% endblock %}
+{% block content %}
+<section class="mb-4">
+  <h1 class="h3 fw-semibold">User Management</h1>
+  <p class="text-light-emphasis mb-0">
+    Create new accounts, update user details, and reset passwords.
+  </p>
+</section>
+
+<section class="row g-4 mb-4">
+  <div class="col-md-6 col-xl-3">
+    <div class="glass-card p-4 h-100">
+      <div class="text-light-emphasis small mb-1">Total users</div>
+      <div class="display-6 fw-semibold">{{ user_summary.total }}</div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-3">
+    <div class="glass-card p-4 h-100">
+      <div class="text-light-emphasis small mb-1">Admins</div>
+      <div class="display-6 fw-semibold">{{ user_summary.admins }}</div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-3">
+    <div class="glass-card p-4 h-100">
+      <div class="text-light-emphasis small mb-1">Analysts</div>
+      <div class="display-6 fw-semibold">{{ user_summary.analysts }}</div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-3">
+    <div class="glass-card p-4 h-100">
+      <div class="text-light-emphasis small mb-1">Viewers</div>
+      <div class="display-6 fw-semibold">{{ user_summary.viewers }}</div>
+    </div>
+  </div>
+</section>
+
+<section class="row g-4">
+  <div class="col-xl-4">
+    <div class="glass-card p-4 p-lg-5 h-100">
+      <h2 class="h5 mb-4">Add new user</h2>
+      <form method="post" class="d-grid gap-3">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="action" value="create-user">
+        <div>
+          <label class="form-label" for="full_name">Full name</label>
+          <input class="form-control" id="full_name" name="full_name" type="text"
+                 autocomplete="name" required>
+        </div>
+        <div>
+          <label class="form-label" for="email">Email address</label>
+          <input class="form-control" id="email" name="email" type="email"
+                 autocomplete="off" required>
+        </div>
+        <div>
+          <label class="form-label" for="password">Password</label>
+          <input class="form-control" id="password" name="password" type="password"
+                 minlength="8" autocomplete="new-password" required>
+        </div>
+        <div>
+          <label class="form-label" for="role">Role</label>
+          <select class="form-select" id="role" name="role" required>
+            {% for role_name in role_choices %}
+              <option value="{{ role_name }}" {% if role_name == 'analyst' %}selected{% endif %}>
+                {{ role_name | title }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <button class="btn btn-primary" type="submit">Create account</button>
+      </form>
+      <p class="small text-light-emphasis mt-4 mb-0">
+        Passwords are stored as hashes and cannot be recovered. Use the reset option below if a user forgets theirs.
+      </p>
+    </div>
+  </div>
+
+  <div class="col-xl-8">
+    <div class="d-grid gap-4">
+      {% for user in users %}
+        <article class="glass-card p-4 admin-user-card">
+          <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
+            <div>
+              <h2 class="h5 mb-1">{{ user.full_name }}</h2>
+              <div class="text-light-emphasis">{{ user.email }}</div>
+            </div>
+            <div class="d-flex flex-wrap gap-2 align-items-start">
+              <span class="badge text-bg-info text-uppercase">{{ user.role }}</span>
+              <span class="badge {{ 'text-bg-success' if user.is_active else 'text-bg-secondary' }}">
+                {{ 'Active' if user.is_active else 'Inactive' }}
+              </span>
+              <span class="badge text-bg-dark">ID {{ user.id }}</span>
+            </div>
+          </div>
+
+          <div class="row g-3 admin-user-meta mb-4">
+            <div class="col-md-6">
+              <span class="small text-light-emphasis">Created</span>
+              <div class="fw-semibold mt-1">{{ user.created_at.strftime("%d %b %Y") }}</div>
+            </div>
+            <div class="col-md-6">
+              <span class="small text-light-emphasis">Last updated</span>
+              <div class="fw-semibold mt-1">{{ user.updated_at.strftime("%d %b %Y") }}</div>
+            </div>
+          </div>
+
+          <div class="row g-4">
+            <div class="col-lg-8">
+              <form method="post" class="row g-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="update-user">
+                <input type="hidden" name="user_id" value="{{ user.id }}">
+                <div class="col-md-6">
+                  <label class="form-label" for="full_name_{{ user.id }}">Full name</label>
+                  <input class="form-control" id="full_name_{{ user.id }}" name="full_name"
+                         type="text" value="{{ user.full_name }}" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="email_{{ user.id }}">Email</label>
+                  <input class="form-control" id="email_{{ user.id }}" name="email"
+                         type="email" value="{{ user.email }}" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="role_{{ user.id }}">Role</label>
+                  <select class="form-select" id="role_{{ user.id }}" name="role" required>
+                    {% for role_name in role_choices %}
+                      <option value="{{ role_name }}"
+                              {% if role_name == user.role %}selected{% endif %}>
+                        {{ role_name | title }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-md-6 d-flex align-items-end">
+                  <div class="form-check form-switch admin-toggle">
+                    <input class="form-check-input" id="is_active_{{ user.id }}"
+                           name="is_active" type="checkbox"
+                           {% if user.is_active %}checked{% endif %}>
+                    <label class="form-check-label" for="is_active_{{ user.id }}">Account active</label>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <button class="btn btn-outline-light" type="submit">Save changes</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="col-lg-4">
+              <form method="post" class="d-grid gap-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="action" value="reset-password">
+                <input type="hidden" name="user_id" value="{{ user.id }}">
+                <div>
+                  <label class="form-label" for="new_password_{{ user.id }}">New password</label>
+                  <input class="form-control" id="new_password_{{ user.id }}"
+                         name="new_password" type="password"
+                         minlength="8" autocomplete="new-password" required>
+                </div>
+                <button class="btn btn-primary" type="submit">Reset password</button>
+              </form>
+            </div>
+          </div>
+        </article>
+      {% else %}
+        <div class="glass-card p-4">
+          <p class="mb-0 text-light-emphasis">No users yet. Use the form on the left to create one.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

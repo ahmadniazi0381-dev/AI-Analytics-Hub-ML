@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | Analytics Platform{% endblock %}
+{% block content %}
+<section class="mb-5">
+  <h1 class="h3 fw-semibold mb-1">Dashboard</h1>
+  <p class="text-light-emphasis">Welcome back, {{ current_user.full_name }}.</p>
+</section>
+
+<section class="row g-4 mb-5">
+  <div class="col-lg-8">
+    <div class="glass-card p-4 p-lg-5 h-100">
+      <h2 class="h5 mb-4">About this project</h2>
+      <p>
+        This platform was built to bring together several machine learning and
+        natural language processing techniques in one place. Instead of running
+        separate scripts or Jupyter notebooks for each task, everything is
+        accessible through a single web interface.
+      </p>
+      <p class="mb-0">
+        The goal is to make it easy to upload a dataset, choose a task, run the
+        analysis, and see the results without needing to touch any code.
+      </p>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="glass-card p-4 h-100">
+      <h2 class="h6 mb-3">Quick access</h2>
+      <div class="d-grid gap-2">
+        <a class="btn btn-primary" href="{{ url_for('web.ml_algorithms') }}">Machine Learning</a>
+        <a class="btn btn-outline-light" href="{{ url_for('web.dl_algorithms') }}">Deep Learning</a>
+        <a class="btn btn-outline-light" href="{{ url_for('web.genai_algorithms') }}">Generative AI</a>
+        <a class="btn btn-outline-light" href="{{ url_for('web.assistant') }}">Open Assistant</a>
+        {% if current_user.role == 'admin' %}
+          <a class="btn btn-outline-light" href="{{ url_for('web.admin_users') }}">Manage Users</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="row g-4">
+  <div class="col-12">
+    <div class="glass-card p-4 p-lg-5">
+      <h2 class="h5 mb-4">What this platform does</h2>
+      <div class="row g-4">
+
+        <div class="col-md-6">
+          <h3 class="h6 mb-2">Problem it solves</h3>
+          <p class="text-light-emphasis mb-0">
+            Running machine learning experiments usually requires setting up Python
+            environments, writing scripts, and managing output files manually.
+            This platform removes that friction by wrapping each algorithm in a
+            simple form — you just upload your data, set a few parameters, and
+            click run.
+          </p>
+        </div>
+
+        <div class="col-md-6">
+          <h3 class="h6 mb-2">What you can do</h3>
+          <ul class="text-light-emphasis mb-0 ps-3">
+            <li class="mb-1">Find patterns in transaction data using Apriori</li>
+            <li class="mb-1">Train a neural network classifier on any tabular CSV</li>
+            <li class="mb-1">Ask questions over a block of text using transformer models</li>
+            <li class="mb-1">Generate text continuations from a prompt</li>
+            <li class="mb-1">Extract people, places, and organizations from text</li>
+            <li>Chat with an AI assistant for analysis help</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

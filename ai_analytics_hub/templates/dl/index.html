@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Deep Learning Algorithms | Analytics Platform{% endblock %}
+{% block content %}
+<section class="mb-5">
+  <h1 class="h3 fw-semibold">Deep Learning Algorithms</h1>
+  <p class="text-light-emphasis">
+    Upload a labeled CSV dataset and train a neural network classifier.
+    The model automatically preprocesses your data, trains on it, and
+    reports accuracy, precision, recall, and F1 score.
+  </p>
+</section>
+
+<section class="row g-4" id="dl-root" data-dl-root>
+  {# ── Upload panel ────────────────────────────────────────────── #}
+  <div class="col-xl-4">
+    <div class="glass-card p-4 h-100">
+      <h2 class="h5 mb-3">Step 1 — Upload your CSV</h2>
+      <p class="text-light-emphasis small mb-3">
+        The CSV must include a header row with column names.
+        One column will be your target (label); all others become features.
+      </p>
+      <form class="d-grid gap-3" data-upload-form>
+        <div>
+          <label class="form-label" for="dlFile">CSV file</label>
+          <input class="form-control" id="dlFile" name="file" type="file"
+                 accept=".csv" required>
+        </div>
+        <button class="btn btn-primary" type="submit">Upload dataset</button>
+      </form>
+      <div class="small text-light-emphasis mt-3" data-upload-status>
+        No file uploaded yet.
+      </div>
+      <hr class="border-light border-opacity-10 my-4">
+      <h3 class="h6 mb-2">Uploaded files</h3>
+      <div class="upload-list" data-upload-list></div>
+    </div>
+  </div>
+
+  {# ── Classifier form ─────────────────────────────────────────── #}
+  <div class="col-xl-8">
+    <div class="glass-card p-4 p-lg-5">
+      <h2 class="h5 mb-1">Step 2 — Neural Network Classifier</h2>
+      <p class="text-light-emphasis small mb-4">
+        Choose your dataset, enter the name of the column you want to predict,
+        then set the training parameters. The model uses a fully connected
+        neural network with three hidden layers.
+      </p>
+
+      <form class="row g-3" data-classifier-form>
+        <div class="col-md-6">
+          <label class="form-label" for="dlDataset">Dataset</label>
+          <select class="form-select" id="dlDataset" name="upload_id"
+                  data-upload-select required></select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="targetColumn">
+            Target column
+            <span class="text-light-emphasis small">(the column to predict)</span>
+          </label>
+          <input class="form-control" id="targetColumn" name="target_column"
+                 placeholder="e.g. Outcome, Class, Label" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label" for="epochs">Epochs</label>
+          <input class="form-control" id="epochs" name="epochs"
+                 type="number" value="10" min="1" max="200" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label" for="batchSize">Batch size</label>
+          <input class="form-control" id="batchSize" name="batch_size"
+                 type="number" value="32" min="1" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label" for="testSize">
+            Test split
+            <span class="text-light-emphasis small">(0.1 – 0.5)</span>
+          </label>
+          <input class="form-control" id="testSize" name="test_size"
+                 type="number" step="0.05" value="0.2" min="0.1" max="0.5" required>
+        </div>
+        <div class="col-12 mt-2">
+          <button class="btn btn-primary px-4" type="submit">Train model</button>
+        </div>
+      </form>
+
+      <div class="mt-4" data-classifier-status style="display:none">
+        <div class="small text-light-emphasis mb-2" data-classifier-status-text>Training in progress…</div>
+        <div class="progress" style="height:4px">
+          <div class="progress-bar progress-bar-striped progress-bar-animated"
+               style="width:100%"></div>
+        </div>
+      </div>
+
+      {# ── Structured results ──────────────────────────────────── #}
+      <div class="mt-4" data-classifier-results style="display:none">
+        <hr class="border-light border-opacity-10 mb-4">
+        <h3 class="h6 mb-3">Training results</h3>
+
+        <div class="row g-3 mb-4" data-metrics-summary></div>
+
+        <h4 class="h6 mb-2">Class labels detected</h4>
+        <div class="mb-4" data-class-labels></div>
+
+        <h4 class="h6 mb-2">Confusion matrix</h4>
+        <div class="table-responsive mb-4">
+          <table class="table table-sm text-light-emphasis">
+            <tbody data-confusion-matrix></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dl.js') }}"></script>
+{% endblock %}

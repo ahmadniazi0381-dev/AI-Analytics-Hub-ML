@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+{% block title %}Generative AI | Analytics Platform{% endblock %}
+{% block extra_head %}
+<style>
+  .mic-btn { transition: background 0.2s; }
+  .mic-btn.recording { background: rgba(220,53,69,0.25); border-color: #dc3545; color: #dc3545; }
+  .mic-btn.recording:hover { background: rgba(220,53,69,0.35); }
+  .voice-wave { display:inline-block; width:10px; height:10px; border-radius:50%;
+                background:#dc3545; margin:0 2px;
+                animation: wave 0.8s ease-in-out infinite alternate; }
+  .voice-wave:nth-child(2){ animation-delay:0.2s; }
+  .voice-wave:nth-child(3){ animation-delay:0.4s; }
+  @keyframes wave { from{transform:scaleY(1)} to{transform:scaleY(2.2)} }
+  .speaking-indicator { color: var(--accent); font-size:0.84rem; }
+  .entity-tag { display:inline-block; padding:2px 8px; border-radius:4px;
+                font-size:0.78rem; font-weight:600; margin:0 2px; }
+  .entity-PER { background:rgba(76,201,240,0.18); border:1px solid rgba(76,201,240,0.4); }
+  .entity-ORG { background:rgba(255,193,7,0.18); border:1px solid rgba(255,193,7,0.4); }
+  .entity-LOC { background:rgba(25,135,84,0.18); border:1px solid rgba(25,135,84,0.4); }
+  .entity-MISC { background:rgba(108,117,125,0.18); border:1px solid rgba(108,117,125,0.4); }
+  .entity-default { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); }
+  .ner-output { line-height:2.4; }
+</style>
+{% endblock %}
+{% block content %}
+<section class="mb-5">
+  <h1 class="h3 fw-semibold">Generative AI — Transformer Models</h1>
+  <p class="text-light-emphasis">
+    Three NLP tasks powered by pre-trained transformer models.
+    Question answering supports voice input and voice output.
+  </p>
+</section>
+
+{# ════════════════════════════════════════════════════════════════
+   MODULE 1 — Question Answering (voice in + voice out)
+   ════════════════════════════════════════════════════════════════ #}
+<section class="glass-card p-4 p-lg-5 mb-4">
+  <div class="d-flex align-items-center gap-2 mb-1">
+    <span class="badge text-bg-info">Module 1</span>
+    <h2 class="h5 mb-0">Question Answering</h2>
+  </div>
+  <p class="text-light-emphasis small mb-4">
+    Paste or speak a context paragraph, then ask a question. The model extracts
+    the answer from the context. You can also have the answer read aloud.
+  </p>
+
+  <!-- Story Presets (Only visible/active under Kid Mode) -->
+  <div id="storyPresetsContainer" style="display: none;" class="mb-4">
+    <label class="form-label mb-3">Choose a Fun Story Book! 📖✨</label>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="story-preset-card p-3 h-100 d-flex flex-column gap-2" data-story="dino" style="cursor: pointer;">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="story-preset-emoji">🦖</span>
+            <span class="badge text-bg-warning">Easy Story</span>
+          </div>
+          <h4 class="h6 fw-bold mb-1 mt-2 text-dark">Dino the Little T-Rex</h4>
+          <p class="small text-muted mb-0 flex-grow-1">Dino is a friendly green dinosaur who loves eating yummy yellow bananas and playing hide-and-seek in the jungle.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="story-preset-card p-3 h-100 d-flex flex-column gap-2" data-story="space" style="cursor: pointer;">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="story-preset-emoji">🚀</span>
+            <span class="badge text-bg-info">Space Story</span>
+          </div>
+          <h4 class="h6 fw-bold mb-1 mt-2 text-dark">Sparky the Rocket</h4>
+          <p class="small text-muted mb-0 flex-grow-1">Sparky is a shiny red space rocket. Sparky flies up to the silver Moon to visit friendly blue star monsters.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="story-preset-card p-3 h-100 d-flex flex-column gap-2" data-story="puppy" style="cursor: pointer;">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="story-preset-emoji">🐶</span>
+            <span class="badge text-bg-success">Cute Story</span>
+          </div>
+          <h4 class="h6 fw-bold mb-1 mt-2 text-dark">Pippin the Puppy</h4>
+          <p class="small text-muted mb-0 flex-grow-1">Pippin is a fluffy brown puppy who lives in a cozy blue house. Pippin loves chasing round red balls in the backyard.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <form class="row g-3" id="qaForm" data-qa-form>
+    <div class="col-12">
+      <label class="form-label" for="qaContext">
+        <span class="standard-label">Context</span>
+        <span class="kid-label" style="display:none">Tell the AI a Story! 📖✍️</span>
+        <span class="expert-label" style="display:none">Context Corpus / Reference Text Payload</span>
+      </label>
+      <textarea class="form-control" id="qaContext" name="context" rows="5" required>Lahore is the capital city of the Punjab province in Pakistan. It is the second-largest city in the country with a population of over 13 million people.</textarea>
+    </div>
+    <div class="col-12">
+      <label class="form-label" for="qaQuestion">
+        <span class="standard-label">Question <span class="text-light-emphasis small ms-2">— type or use the microphone</span></span>
+        <span class="kid-label" style="display:none">Ask a Question about the story! ❓🎤</span>
+        <span class="expert-label" style="display:none">Input Question / Query Token String</span>
+      </label>
+      <div class="input-group">
+        <input class="form-control" id="qaQuestion" name="question"
+               value="What is the capital city of Punjab?" required>
+        <button class="btn btn-outline-light mic-btn" type="button"
+                id="qaVoiceInput" title="Speak your question"
+                data-voice-input-for="qaQuestion">
+          🎤
+        </button>
+      </div>
+      <div class="small mt-1" id="voiceInputStatus" style="display:none">
+        <span class="voice-wave"></span>
+        <span class="voice-wave"></span>
+        <span class="voice-wave"></span>
+        <span class="ms-2 text-light-emphasis">Listening…</span>
+      </div>
+      <!-- Preset Question Buttons (Only visible/active under Kid Mode) -->
+      <div id="presetQuestionsContainer" style="display: none;" class="mt-3">
+        <span class="small text-light-emphasis d-block mb-1">Click a question to ask:</span>
+        <div id="presetQuestionsList" class="d-flex flex-wrap gap-2">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+    </div>
+    <div class="col-12">
+      <button class="btn btn-primary" type="submit">
+        <span class="standard-btn-text">Get answer</span>
+        <span class="kid-btn-text" style="display:none">✨ Find the Answer! ✨</span>
+        <span class="expert-btn-text" style="display:none">Run extractive-qa Pipeline Inference</span>
+      </button>
+    </div>
+  </form>
+
+  <div class="mt-4" id="qaSpinner" style="display:none">
+    <div class="small text-light-emphasis mb-2">Processing…</div>
+    <div class="progress" style="height:4px">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:100%"></div>
+    </div>
+  </div>
+
+  <div class="mt-4" id="qaResultPanel" style="display:none">
+    <hr class="border-light border-opacity-10 mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h3 class="h6 mb-0">Answer</h3>
+      <div class="d-flex gap-2 align-items-center">
+        <span class="speaking-indicator" id="speakingStatus" style="display:none">
+          🔊 Speaking…
+        </span>
+        <button class="btn btn-sm btn-outline-light" id="readAnswerBtn"
+                title="Read answer aloud" style="display:none">
+          🔊 Read aloud
+        </button>
+        <button class="btn btn-sm btn-outline-secondary" id="stopSpeechBtn"
+                title="Stop reading" style="display:none">
+          ⏹ Stop
+        </button>
+      </div>
+    </div>
+    <div class="glass-card p-3" id="qaAnswerText" style="font-size:1.1rem"></div>
+    <div class="small text-light-emphasis mt-2" id="qaAnswerMeta"></div>
+    <!-- Expert Performance Metrics (Only visible under Expert Mode) -->
+    <div id="expertMetricsPanel" style="display: none;" class="mt-3">
+      <div class="d-flex flex-wrap gap-2">
+        <span class="expert-metrics-tag" id="metricLatency">Latency: -- ms</span>
+        <span class="expert-metrics-tag" id="metricConfidence">Confidence: --</span>
+        <span class="expert-metrics-tag" id="metricModel">Pipeline Model: deepset/roberta-base-squad2</span>
+        <span class="expert-metrics-tag" id="metricTokenizer">Tokenizer: roberta-base</span>
+        <span class="expert-metrics-tag" id="metricTask">Task: extractive-qa</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ════════════════════════════════════════════════════════════════
+   MODULE 2 — Text Generation
+   ════════════════════════════════════════════════════════════════ #}
+<section class="glass-card p-4 p-lg-5 mb-4">
+  <div class="d-flex align-items-center gap-2 mb-1">
+    <span class="badge text-bg-success">Module 2</span>
+    <h2 class="h5 mb-0">Text Generation</h2>
+  </div>
+  <p class="text-light-emphasis small mb-4">
+    Enter a text prompt and the model will generate a continuation.
+    Adjust max tokens to control length and temperature to control creativity.
+  </p>
+
+  <form class="row g-3" id="genForm" data-generation-form>
+    <div class="col-12">
+      <label class="form-label" for="genPrompt">Prompt</label>
+      <textarea class="form-control" id="genPrompt" name="prompt" rows="4" required>Machine learning is changing the way we</textarea>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label" for="maxTokens">
+        Max tokens
+        <span class="text-light-emphasis small">(how long the output is)</span>
+      </label>
+      <input class="form-control" id="maxTokens" name="max_new_tokens"
+             type="number" value="80" min="10" max="500" required>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label" for="temperature">
+        Temperature
+        <span class="text-light-emphasis small">(higher = more creative)</span>
+      </label>
+      <input class="form-control" id="temperature" name="temperature"
+             type="number" step="0.1" value="0.7" min="0.1" max="2.0" required>
+    </div>
+    <div class="col-12">
+      <button class="btn btn-primary" type="submit">Generate text</button>
+    </div>
+  </form>
+
+  <div class="mt-4" id="genSpinner" style="display:none">
+    <div class="small text-light-emphasis mb-2">Generating…</div>
+    <div class="progress" style="height:4px">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:100%"></div>
+    </div>
+  </div>
+
+  <div class="mt-4" id="genResultPanel" style="display:none">
+    <hr class="border-light border-opacity-10 mb-3">
+    <h3 class="h6 mb-2">Generated text</h3>
+    <div class="glass-card p-3" id="genOutputText" style="line-height:1.7"></div>
+  </div>
+</section>
+
+{# ════════════════════════════════════════════════════════════════
+   MODULE 3 — Named Entity Recognition
+   ════════════════════════════════════════════════════════════════ #}
+<section class="glass-card p-4 p-lg-5 mb-4">
+  <div class="d-flex align-items-center gap-2 mb-1">
+    <span class="badge text-bg-warning text-dark">Module 3</span>
+    <h2 class="h5 mb-0">Named Entity Recognition (NER)</h2>
+  </div>
+  <p class="text-light-emphasis small mb-4">
+    Paste any text and the model will identify and highlight named entities
+    such as people (PER), organizations (ORG), and locations (LOC).
+  </p>
+
+  <form class="row g-3" id="nerForm" data-ner-form>
+    <div class="col-12">
+      <label class="form-label" for="nerText">Input text</label>
+      <textarea class="form-control" id="nerText" name="text" rows="5" required>Elon Musk founded SpaceX in Hawthorne, California. The company later partnered with NASA to deliver cargo to the International Space Station.</textarea>
+    </div>
+    <div class="col-12">
+      <button class="btn btn-primary" type="submit">Extract entities</button>
+    </div>
+  </form>
+
+  <div class="mt-4" id="nerSpinner" style="display:none">
+    <div class="small text-light-emphasis mb-2">Extracting entities…</div>
+    <div class="progress" style="height:4px">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:100%"></div>
+    </div>
+  </div>
+
+  <div class="mt-4" id="nerResultPanel" style="display:none">
+    <hr class="border-light border-opacity-10 mb-3">
+    <div class="d-flex flex-wrap gap-3 mb-3">
+      <span><span class="entity-tag entity-PER">PER</span> Person</span>
+      <span><span class="entity-tag entity-ORG">ORG</span> Organization</span>
+      <span><span class="entity-tag entity-LOC">LOC</span> Location</span>
+      <span><span class="entity-tag entity-MISC">MISC</span> Miscellaneous</span>
+    </div>
+    <h3 class="h6 mb-2">Highlighted text</h3>
+    <div class="glass-card p-3 ner-output mb-3" id="nerHighlighted"></div>
+    <h3 class="h6 mb-2">Entities found</h3>
+    <div class="table-responsive">
+      <table class="table table-sm text-light-emphasis">
+        <thead>
+          <tr><th>Entity</th><th>Type</th><th>Score</th></tr>
+        </thead>
+        <tbody id="nerEntityTable"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/genai.js') }}"></script>
+{% endblock %}
