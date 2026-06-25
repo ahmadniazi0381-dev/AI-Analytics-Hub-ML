@@ -1,8 +1,7 @@
 # ML and AI Analytics Platform
 
 ## Project Team
-- **Ahmad Niazi** (L1f23bsse0381)
-- **Hamza Sahid** (L123bsse0362)
+- **Ahmad Niazi*
 
 A Flask web application built as a semester project that provides a single interface for running several machine learning and NLP tasks without writing any code.
 
